@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_marginRight="1dp"
+    android:layout_marginLeft="1dp"
+    tools:context="android.practice.curriculumschedule.CurriculumMaintenanceActivity">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/menu_curriculumNameMaintenance_Str"
+        android:textSize="24sp"
+        android:gravity="center"
+        android:textStyle="bold"
+        android:paddingTop="5dp"
+        android:paddingBottom="5dp"/>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/black"></TextView>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="课程名称："
+            android:textSize="18sp"
+            android:gravity="right"
+            android:layout_weight="1"/>
+
+        <EditText
+            android:id="@+id/edt_name_curriculumMaintenance"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="left"
+            android:hint="请输入课程名称"
+            android:maxLength="3"
+            android:text=""
+            android:textSize="18sp" />
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <Button
+            android:id="@+id/btn_insert_curriculumMaintenance"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="新增"
+            android:textSize="18sp" />
+        <Button
+            android:id="@+id/btn_update_curriculumMaintenance"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="修改"
+            android:textSize="18sp" />
+        <Button
+            android:id="@+id/btn_delete_curriculumMaintenance"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="删除"
+            android:textSize="18sp" />
+        <Button
+            android:id="@+id/btn_back_curriculumMaintenance"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="返回"
+            android:textSize="18sp" />
+    </LinearLayout>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="10dp" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:background="@color/mediumaquamarine"
+        >
+        <TextView
+            android:textSize="18sp"
+            android:gravity="center"
+            android:background="@color/purple"
+            android:textColor="@color/white"
+            android:layout_width="100dp"
+            android:text="ID"
+            android:layout_margin="1dp"
+            android:layout_height="wrap_content" />
+        <TextView
+            android:textSize="18sp"
+            android:gravity="center"
+            android:background="@color/purple"
+            android:textColor="@color/white"
+            android:layout_width="match_parent"
+            android:text="课程名称"
+            android:layout_margin="1dp"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recyclerView_curriculum"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+    </android.support.v7.widget.RecyclerView>
+
+</LinearLayout>

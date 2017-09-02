@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">课程表</string>
+    <string name="menu_curriculumNameMaintenance_Str">课程名称维护</string>
+    <string name="menu_curriculumSetting_Str">课程设置</string>
+    <string name="str_YuWen">语文</string>
+    <string name="str_ShuXue">数学</string>
+    <string name="str_YingYu">英语</string>
+    <string name="str_TiYu">体育</string>
+    <string name="str_YinYue">音乐</string>
+    <string name="str_MeiShu">美术</string>
+</resources>

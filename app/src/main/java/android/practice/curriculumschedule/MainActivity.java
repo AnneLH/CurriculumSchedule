@@ -3,6 +3,9 @@ package android.practice.curriculumschedule;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -24,6 +27,7 @@ import org.w3c.dom.Text;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener{
@@ -33,9 +37,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private static final String DayOfWeek_3 = "Wednesday";
     private static final String DayOfWeek_4 = "Thursday";
     private static final String DayOfWeek_5 = "Friday";
-    private String  errMsg  = null,
-                    sToday  = null,
-                    sWeek   = null;
+    private String  errMsg      = null,
+                    sToday      = null,
+                    sWeek       = null,
+                    sCurHHmm    = null;
+    private int     old_color   = 0;
     private Button  btn_wrSch    = null;
     private TextView    txt_date = null,
                         old_text = null;
@@ -46,6 +52,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         txt_friday      = null;
     private Boolean bEditMode    = false;
     private List<Schedule> scheduleList = null;
+    private List<WorkRest> workrestList = null;
     private List<Curriculum> curriculumList = null;
     private String[] curriculums = null;
 
@@ -61,9 +68,87 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         txt_date    = (TextView)findViewById(R.id.txt_date_main);
         initTextGroup();
         getCurrentDate();
-        refreshSchedule();
+        //检查WorkRest表是否存在，如果不存在，则创建。
+        workrestList = DataSupport.findAll(WorkRest.class);
+        if(workrestList == null || workrestList.size() == 0){
+            //第一次运行程序，课程名称的表尚未建立。此处需要建立WorkRest表，并初始化。
+            createWorkRest();
+        }
     }
 
+    Handler handler = new Handler();
+    Runnable runEvery60s = new Runnable() {
+        @Override
+        public void run() {
+            Log.d(TAG, "run: ===========runEvery60s============");
+            judgeTimeAndSetColor();
+            handler.postDelayed(runEvery60s,60000);
+        }
+    };
+
+    private void judgeTimeAndSetColor(){
+        Calendar cal = Calendar.getInstance();
+        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
+        sCurHHmm = sdf.format(cal.getTime());
+        String sBegin,sEnd,sName;
+        int passNumber = 7;
+        for(int i = workrestList.size()-1; i > 1; i--){
+            sBegin  = workrestList.get(i).getTimeBegin();
+            sEnd    = workrestList.get(i).getTimeEnd();
+            sName   = workrestList.get(i).getName();
+            Log.d(TAG, "judgeTimeAndSetColor: ========"+ sName.substring(0,1));
+            if(timeCompare(sCurHHmm,sEnd)){
+                //当前时间大于课程结束时间，结束循环。
+                //将今天的全部课程都置为已经上的课的颜色。
+                setPassedBackcolor(1,7,0xff00ced1);
+                break;
+            }else{
+                //当前时间小于课程结束时间，检查是否小于本课程开始时间。
+                if(timeCompare(sCurHHmm,sBegin)){
+                    //当前时间在本次课程开始和结束时间之间（本次课程正在进行时）
+                    //已经上的课程颜色为<color name="darkturquoise">#00ced1</color> <!-- 暗宝石绿 -->
+                    //正在上的课程颜色为<color name="lime">#00ff00</color> <!-- 酸橙色 -->
+                    setPassedBackcolor(1,passNumber - 1,0xff00ced1);
+                    if(sName.substring(0,1).equals("第")){
+                        setPassedBackcolor(passNumber,passNumber,0xff00ff00);
+                    }else{
+                        setPassedBackcolor(passNumber,passNumber,0xff00ced1);
+                    }
+                    break;
+                }else{
+                    //当前时间小于本次课程的开始时间，说明本节课未开始，置标志。
+                    if(sName.substring(0,1).equals("第"))
+                        passNumber -= 1;
+                }
+            }
+        }
+        Log.d(TAG, "judgeTimeAndSetColor: passnumber = " + passNumber);
+    }
+
+    private void setPassedBackcolor(int iFrom,int iTo,int iColor){
+        Log.d(TAG, "setPassedBackcolor: from = " + iFrom + ", to = " + iTo + ", iColor = " + iColor);
+        for(int j = iFrom; j <= iTo; j++){
+            switch (sWeek){
+                case "星期一":
+                    txt_monday[j].setBackgroundColor(iColor);
+                    break;
+                case "星期二":
+                    txt_tuesday[j].setBackgroundColor(iColor);
+                    break;
+                case "星期三":
+                    txt_wednesday[j].setBackgroundColor(iColor);
+                    break;
+                case "星期四":
+                    txt_thursday[j].setBackgroundColor(iColor);
+                    break;
+                case "星期五":
+                    txt_friday[j].setBackgroundColor(iColor);
+                    break;
+                default:
+                    Log.i(TAG, "run: unknow!!!!!!!!!==");
+            }
+        }
+    }
     private void initTextGroup(){
         txt_monday = new TextView[8];
         txt_monday[0] = (TextView)findViewById(R.id.txt_monday_0);
@@ -117,7 +202,24 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             txt_thursday[i].setOnClickListener(this);
             txt_friday[i].setOnClickListener(this);
         }
-        old_text = txt_monday[1];
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        handler.removeCallbacks(runEvery60s);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        handler.removeCallbacks(runEvery60s);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        handler.removeCallbacks(runEvery60s);
     }
 
     @Override
@@ -127,6 +229,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         refreshSchedule();
         bEditMode = false;
         setEditMode();
+        setColorOfToday();
     }
 
     private void getCurrentDate(){
@@ -219,6 +322,129 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
+    private void createWorkRest(){
+        Log.d(TAG, "createWorkRest: ============");
+        try{
+            WorkRest wr1 = new WorkRest();
+            wr1.setMyId(1);
+            wr1.setName("大课间");
+            wr1.setTimeBegin("08:10");
+            wr1.setTimeEnd("08:35");
+            wr1.saveThrows();
+            WorkRest wr2 = new WorkRest();
+            wr2.setMyId(2);
+            wr2.setName("晨会");
+            wr2.setTimeBegin("08:35");
+            wr2.setTimeEnd("08:50");
+            wr2.saveThrows();
+            WorkRest wr3 = new WorkRest();
+            wr3.setMyId(3);
+            wr3.setName("课间休息");
+            wr3.setTimeBegin("08:50");
+            wr3.setTimeEnd("08:55");
+            wr3.saveThrows();
+            WorkRest wr4 = new WorkRest();
+            wr4.setMyId(4);
+            wr4.setName("第一节课");
+            wr4.setTimeBegin("08:55");
+            wr4.setTimeEnd("09:30");
+            wr4.saveThrows();
+            WorkRest wr5 = new WorkRest();
+            wr5.setMyId(5);
+            wr5.setName("课间休息");
+            wr5.setTimeBegin("09:30");
+            wr5.setTimeEnd("09:40");
+            wr5.saveThrows();
+            WorkRest wr6 = new WorkRest();
+            wr6.setMyId(6);
+            wr6.setName("第二节课");
+            wr6.setTimeBegin("09:40");
+            wr6.setTimeEnd("10:15");
+            wr6.saveThrows();
+            WorkRest wr7 = new WorkRest();
+            wr7.setMyId(7);
+            wr7.setName("课间休息");
+            wr7.setTimeBegin("10:15");
+            wr7.setTimeEnd("10:25");
+            wr7.saveThrows();
+            WorkRest wr8 = new WorkRest();
+            wr8.setMyId(8);
+            wr8.setName("眼保健操");
+            wr8.setTimeBegin("10:25");
+            wr8.setTimeEnd("10:30");
+            wr8.saveThrows();
+            WorkRest wr9 = new WorkRest();
+            wr9.setMyId(9);
+            wr9.setName("第三节课");
+            wr9.setTimeBegin("10:30");
+            wr9.setTimeEnd("11:05");
+            wr9.saveThrows();
+            WorkRest wr10 = new WorkRest();
+            wr10.setMyId(10);
+            wr10.setName("课间休息");
+            wr10.setTimeBegin("11:05");
+            wr10.setTimeEnd("11:15");
+            wr10.saveThrows();
+            WorkRest wr11 = new WorkRest();
+            wr11.setMyId(11);
+            wr11.setName("第四节课");
+            wr11.setTimeBegin("11:15");
+            wr11.setTimeEnd("11:50");
+            wr11.saveThrows();
+            WorkRest wr12 = new WorkRest();
+            wr12.setMyId(12);
+            wr12.setName("写字");
+            wr12.setTimeBegin("13:30");
+            wr12.setTimeEnd("13:45");
+            wr12.saveThrows();
+            WorkRest wr13 = new WorkRest();
+            wr13.setMyId(13);
+            wr13.setName("课间休息");
+            wr13.setTimeBegin("13:45");
+            wr13.setTimeEnd("13:50");
+            wr13.saveThrows();
+            WorkRest wr14 = new WorkRest();
+            wr14.setMyId(14);
+            wr14.setName("眼保健操");
+            wr14.setTimeBegin("13:50");
+            wr14.setTimeEnd("13:55");
+            wr14.saveThrows();
+            WorkRest wr15 = new WorkRest();
+            wr15.setMyId(15);
+            wr15.setName("第五节课");
+            wr15.setTimeBegin("13:55");
+            wr15.setTimeEnd("14:30");
+            wr15.saveThrows();
+            WorkRest wr16 = new WorkRest();
+            wr16.setMyId(16);
+            wr16.setName("课间休息");
+            wr16.setTimeBegin("14:30");
+            wr16.setTimeEnd("14:40");
+            wr16.saveThrows();
+            WorkRest wr17 = new WorkRest();
+            wr17.setMyId(17);
+            wr17.setName("第六节课");
+            wr17.setTimeBegin("14:40");
+            wr17.setTimeEnd("15:15");
+            wr17.saveThrows();
+            WorkRest wr18 = new WorkRest();
+            wr18.setMyId(18);
+            wr18.setName("课间休息");
+            wr18.setTimeBegin("15:15");
+            wr18.setTimeEnd("15:25");
+            wr18.saveThrows();
+            WorkRest wr19 = new WorkRest();
+            wr19.setMyId(19);
+            wr19.setName("第七节课");
+            wr19.setTimeBegin("15:25");
+            wr19.setTimeEnd("16:00");
+            wr19.saveThrows();
+        }catch (Exception e){
+            e.printStackTrace();
+            Log.e(TAG, "createWorkRest: "+ e.toString() );
+        }
+    }
+
     //刷新课程名称表（Schedule）,将课程名称在recyclerView中显示。
     private void refreshSchedule(){
         Log.d(TAG, "refreshSchedule: ===============");
@@ -236,6 +462,36 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             txt_thursday[i].setText(scheduleList.get(i -1).getThursday());
             txt_friday[i].setText(scheduleList.get(i -1).getFriday());
         }
+    }
+
+    //设置当天课程的背景色
+    //当天的颜色为<color name="mediumspringgreen">#00fa9a</color> <!-- 中春绿色 -->
+    //正在上的课程颜色为<color name="lime">#00ff00</color> <!-- 酸橙色 -->
+    //已经上的课程颜色为<color name="darkturquoise">#00ced1</color> <!-- 暗宝石绿 -->
+    private void setColorOfToday(){
+        Log.d(TAG, "setColorOfToday: =========");
+        setPassedBackcolor(1,7,0xff00fa9a);
+        handler.postDelayed(runEvery60s,1000);
+    }
+
+    //返回真，表示time1大于等于time2
+    public boolean timeCompare(String time1,String time2){
+        Log.d(TAG, "timeCompare: time1 = " + time1 + ",time2 = " + time2);
+        boolean time1Bigger = false;
+        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
+        try{
+            if(sdf.parse(time1).getTime() >= sdf.parse(time2).getTime()){
+                Log.d(TAG, "timeCompare: time1Bigger");
+                time1Bigger = true;
+            }else{
+                Log.d(TAG, "timeCompare: time2Bigger");
+                time1Bigger = false;
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+            Log.e(TAG, "timeCompare: "+e.toString());
+        }
+        return time1Bigger;
     }
 
     @Override
@@ -315,35 +571,45 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     for(int i = 1;i<=7;i++){
                         if(txt_monday[i].getId() == v.getId()){
                             setCurriculum(DayOfWeek_1,i);
+                            if(old_text != null)
                             textViewSelected(old_text,false);
+                            old_color = ((ColorDrawable)txt_monday[i].getBackground()).getColor();
                             textViewSelected(txt_monday[i],true);
                             old_text = txt_monday[i];
                             break;
                         }
                         if(txt_tuesday[i].getId() == v.getId()){
                             setCurriculum(DayOfWeek_2,i);
+                            if(old_text != null)
                             textViewSelected(old_text,false);
+                            old_color = ((ColorDrawable)txt_tuesday[i].getBackground()).getColor();
                             textViewSelected(txt_tuesday[i],true);
                             old_text = txt_tuesday[i];
                             break;
                         }
                         if(txt_wednesday[i].getId() == v.getId()){
                             setCurriculum(DayOfWeek_3,i);
+                            if(old_text != null)
                             textViewSelected(old_text,false);
+                            old_color = ((ColorDrawable)txt_wednesday[i].getBackground()).getColor();
                             textViewSelected(txt_wednesday[i],true);
                             old_text = txt_wednesday[i];
                             break;
                         }
                         if(txt_thursday[i].getId() == v.getId()){
                             setCurriculum(DayOfWeek_4,i);
+                            if(old_text != null)
                             textViewSelected(old_text,false);
+                            old_color = ((ColorDrawable)txt_thursday[i].getBackground()).getColor();
                             textViewSelected(txt_thursday[i],true);
                             old_text = txt_thursday[i];
                             break;
                         }
                         if(txt_friday[i].getId() == v.getId()){
                             setCurriculum(DayOfWeek_5,i);
+                            if(old_text != null)
                             textViewSelected(old_text,false);
+                            old_color = ((ColorDrawable)txt_friday[i].getBackground()).getColor();
                             textViewSelected(txt_friday[i],true);
                             old_text = txt_friday[i];
                             break;
@@ -353,31 +619,41 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     Log.d(TAG, "onClick: bEditMode == false");
                     for(int i = 1;i<=7;i++){
                         if(txt_monday[i].getId() == v.getId()){
+                            if(old_text != null)
                             textViewSelected(old_text,false);
+                            old_color = ((ColorDrawable)txt_monday[i].getBackground()).getColor();
                             textViewSelected(txt_monday[i],true);
                             old_text = txt_monday[i];
                             break;
                         }
                         if(txt_tuesday[i].getId() == v.getId()){
+                            if(old_text != null)
                             textViewSelected(old_text,false);
+                            old_color = ((ColorDrawable)txt_tuesday[i].getBackground()).getColor();
                             textViewSelected(txt_tuesday[i],true);
                             old_text = txt_tuesday[i];
                             break;
                         }
                         if(txt_wednesday[i].getId() == v.getId()){
+                            if(old_text != null)
                             textViewSelected(old_text,false);
+                            old_color = ((ColorDrawable)txt_wednesday[i].getBackground()).getColor();
                             textViewSelected(txt_wednesday[i],true);
                             old_text = txt_wednesday[i];
                             break;
                         }
                         if(txt_thursday[i].getId() == v.getId()){
+                            if(old_text != null)
                             textViewSelected(old_text,false);
+                            old_color = ((ColorDrawable)txt_thursday[i].getBackground()).getColor();
                             textViewSelected(txt_thursday[i],true);
                             old_text = txt_thursday[i];
                             break;
                         }
                         if(txt_friday[i].getId() == v.getId()){
+                            if(old_text != null)
                             textViewSelected(old_text,false);
+                            old_color = ((ColorDrawable)txt_friday[i].getBackground()).getColor();
                             textViewSelected(txt_friday[i],true);
                             old_text = txt_friday[i];
                             break;
@@ -484,7 +760,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if(bool){
             textview.setBackgroundColor(Color.YELLOW);
         }else{
-            textview.setBackgroundColor(0xfff5fffa);
+            textview.setBackgroundColor(old_color);
         }
     }
 }

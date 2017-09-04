@@ -15,7 +15,7 @@ public class WorkRestScheduleActivity extends AppCompatActivity {
         setContentView(R.layout.activity_work_rest_schedule);
         Log.d(TAG, "onCreate: ==============");
     }
-    
+
     public static void activityStart(Context context){
         Intent intent = new Intent(context,WorkRestScheduleActivity.class);
         context.startActivity(intent);

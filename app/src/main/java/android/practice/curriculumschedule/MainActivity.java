@@ -1,6 +1,10 @@
 package android.practice.curriculumschedule;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -37,6 +41,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private static final String DayOfWeek_3 = "Wednesday";
     private static final String DayOfWeek_4 = "Thursday";
     private static final String DayOfWeek_5 = "Friday";
+    private IntentFilter intentFilter = null;
+    private WhenTimeChangeReceiver timeChangeReceiver = null;
     private String  errMsg      = null,
                     sToday      = null,
                     sWeek       = null,
@@ -76,16 +82,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    Handler handler = new Handler();
-    Runnable runEvery60s = new Runnable() {
+    class WhenTimeChangeReceiver extends BroadcastReceiver{
         @Override
-        public void run() {
-            Log.d(TAG, "run: ===========runEvery60s============");
+        public void onReceive(Context context, Intent intent) {
             judgeTimeAndSetColor();
-            handler.postDelayed(runEvery60s,60000);
         }
-    };
-
+    }
     private void judgeTimeAndSetColor(){
         Calendar cal = Calendar.getInstance();
         SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
@@ -205,21 +207,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     @Override
-    protected void onPause() {
-        super.onPause();
-        handler.removeCallbacks(runEvery60s);
+    protected void onDestroy() {
+        super.onDestroy();
+        unregisterReceiver(timeChangeReceiver);
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        handler.removeCallbacks(runEvery60s);
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        handler.removeCallbacks(runEvery60s);
+        unregisterReceiver(timeChangeReceiver);
     }
 
     @Override
@@ -230,6 +226,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         bEditMode = false;
         setEditMode();
         setColorOfToday();
+        intentFilter = new IntentFilter(Intent.ACTION_TIME_TICK);
+        timeChangeReceiver = new WhenTimeChangeReceiver();
+        registerReceiver(timeChangeReceiver,intentFilter);
     }
 
     private void getCurrentDate(){
@@ -471,7 +470,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private void setColorOfToday(){
         Log.d(TAG, "setColorOfToday: =========");
         setPassedBackcolor(1,7,0xff00fa9a);
-        handler.postDelayed(runEvery60s,1000);
+        judgeTimeAndSetColor();
     }
 
     //返回真，表示time1大于等于time2

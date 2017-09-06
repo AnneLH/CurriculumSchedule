@@ -82,7 +82,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     class WhenTimeChangeReceiver extends BroadcastReceiver{
         @Override
         public void onReceive(Context context, Intent intent) {
-            judgeTimeAndSetColor();
+            if(sWeek.equals("星期六") || sWeek.equals("星期天")){
+                Log.d(TAG, "onReceive: 星期六 or 星期天");;
+            }else{
+                judgeTimeAndSetColor();
+            }
         }
     }
     private void judgeTimeAndSetColor(){
@@ -127,27 +131,23 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private void setPassedBackcolor(int iFrom,int iTo,int iColor){
         Log.d(TAG, "setPassedBackcolor: from = " + iFrom + ", to = " + iTo + ", iColor = " + iColor);
         for(int j = iFrom; j <= iTo; j++){
-            switch (sWeek){
-                case "星期一":
-                    txt_monday[j].setBackgroundColor(iColor);
-                    break;
-                case "星期二":
-                    txt_tuesday[j].setBackgroundColor(iColor);
-                    break;
-                case "星期三":
-                    txt_wednesday[j].setBackgroundColor(iColor);
-                    break;
-                case "星期四":
-                    txt_thursday[j].setBackgroundColor(iColor);
-                    break;
-                case "星期五":
-                    txt_friday[j].setBackgroundColor(iColor);
-                    break;
-                default:
-                    Log.i(TAG, "run: unknow!!!!!!!!!==");
-            }
+            getTextView(j).setBackgroundColor(iColor);
         }
     }
+
+    private TextView getTextView (int index){
+        switch (sWeek){
+            case "星期一":return txt_monday[index];
+            case "星期二":return txt_tuesday[index];
+            case "星期三":return txt_wednesday[index];
+            case "星期四":return txt_thursday[index];
+            case "星期五":return txt_friday[index];
+            default:
+                Log.e(TAG, "getTextView: === Should not reach here! ===");
+                return txt_monday[index];//不应该让程序运行到这里，真到这里，说明哪里有漏洞。
+        }
+    }
+
     private void initTextGroup(){
         txt_monday = new TextView[8];
         txt_monday[0] = (TextView)findViewById(R.id.txt_monday_0);
@@ -224,7 +224,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         refreshSchedule();
         bEditMode = false;
         setEditMode();
-        setColorOfToday();
+        if(sWeek.equals("星期六") || sWeek.equals("星期天")){
+            Log.d(TAG, "onResume: 星期六 or 星期天");
+        }else{
+            setColorOfToday();
+        }
         intentFilter = new IntentFilter(Intent.ACTION_TIME_TICK);
         timeChangeReceiver = new WhenTimeChangeReceiver();
         registerReceiver(timeChangeReceiver,intentFilter);

@@ -95,7 +95,7 @@ public class WorkRestScheduleActivity extends AppCompatActivity {
         String timeBegin,timeEnd,time;
         String[] temp;
         //判断当前时间在哪个时间区域内，则将这个时间区域对应的TextView的背景色变为设定的颜色。
-        for(int i = 0;i<txt_left.length - 1;i++){
+        for(int i = 0; i < txt_left.length; i++){
             time = txt_left[i].getText().toString().trim();
             temp = time.split("-");
             timeBegin = temp[0].trim();

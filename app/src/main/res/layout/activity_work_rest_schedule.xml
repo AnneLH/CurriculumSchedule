@@ -29,198 +29,248 @@
         android:layout_gravity="center">
 
         <TextView
+            android:id="@+id/txt_0L"
             android:layout_columnWeight="1"
             android:text="08:10-08:35"
             android:textAlignment="center"
             android:textSize="18sp" />
 
         <TextView
+            android:id="@+id/txt_0R"
             android:layout_columnWeight="1"
             android:text="大课间"
             android:textAlignment="center"
             android:textSize="18sp" />
+
         <TextView
+            android:id="@+id/txt_1L"
             android:layout_columnWeight="1"
             android:text="08:35-08:50"
             android:textAlignment="center"
             android:textSize="18sp" />
+
         <TextView
+            android:id="@+id/txt_1R"
             android:layout_columnWeight="1"
             android:text="晨会"
             android:textAlignment="center"
             android:textSize="18sp" />
         <TextView
+            android:id="@+id/txt_2L"
             android:layout_columnWeight="1"
             android:text="08:50-08:55"
             android:textAlignment="center"
             android:textSize="18sp" />
         <TextView
+            android:id="@+id/txt_2R"
             android:layout_columnWeight="1"
             android:text="课间休息"
             android:textAlignment="center"
             android:textSize="18sp" />
         <TextView
+            android:id="@+id/txt_3L"
             android:layout_columnWeight="1"
             android:text="08:55-09:30"
             android:textAlignment="center"
             android:textSize="18sp" />
         <TextView
+            android:id="@+id/txt_3R"
             android:layout_columnWeight="1"
             android:text="第一节课"
             android:textAlignment="center"
             android:textSize="18sp" />
         <TextView
+            android:id="@+id/txt_4L"
             android:layout_columnWeight="1"
             android:text="09:30-09:40"
             android:textAlignment="center"
             android:textSize="18sp" />
         <TextView
+            android:id="@+id/txt_4R"
             android:layout_columnWeight="1"
             android:text="课间休息"
             android:textAlignment="center"
             android:textSize="18sp" />
         <TextView
+            android:id="@+id/txt_5L"
             android:layout_columnWeight="1"
             android:text="09:40-10:15"
             android:textAlignment="center"
             android:textSize="18sp" />
         <TextView
+            android:id="@+id/txt_5R"
             android:layout_columnWeight="1"
             android:text="第二节课"
             android:textAlignment="center"
             android:textSize="18sp" />
         <TextView
+            android:id="@+id/txt_6L"
             android:layout_columnWeight="1"
             android:text="10:15-10:25"
             android:textAlignment="center"
             android:textSize="18sp" />
         <TextView
+            android:id="@+id/txt_6R"
             android:layout_columnWeight="1"
             android:text="课间休息"
             android:textAlignment="center"
             android:textSize="18sp" />
         <TextView
+            android:id="@+id/txt_7L"
             android:layout_columnWeight="1"
             android:text="10:25-10:30"
             android:textAlignment="center"
             android:textSize="18sp" />
         <TextView
+            android:id="@+id/txt_7R"
             android:layout_columnWeight="1"
             android:text="眼保健操"
             android:textAlignment="center"
             android:textSize="18sp" />
         <TextView
+            android:id="@+id/txt_8L"
             android:layout_columnWeight="1"
             android:text="10:30-11:05"
             android:textAlignment="center"
             android:textSize="18sp" />
         <TextView
+            android:id="@+id/txt_8R"
             android:layout_columnWeight="1"
             android:text="第三节课"
             android:textAlignment="center"
             android:textSize="18sp" />
         <TextView
+            android:id="@+id/txt_9L"
             android:layout_columnWeight="1"
             android:text="11:05-11:15"
             android:textAlignment="center"
             android:textSize="18sp" />
         <TextView
+            android:id="@+id/txt_9R"
             android:layout_columnWeight="1"
             android:text="课间休息"
             android:textAlignment="center"
             android:textSize="18sp" />
         <TextView
+            android:id="@+id/txt_10L"
             android:layout_columnWeight="1"
             android:text="11:15-11:50"
             android:textAlignment="center"
             android:textSize="18sp" />
         <TextView
+            android:id="@+id/txt_10R"
             android:layout_columnWeight="1"
             android:text="第四节课"
             android:textAlignment="center"
             android:textSize="18sp" />
         <TextView
+            android:id="@+id/txt_11L"
+            android:layout_columnWeight="1"
+            android:text="11:50-13:30"
+            android:textAlignment="center"
+            android:textSize="18sp" />
+        <TextView
+            android:id="@+id/txt_11R"
+            android:layout_columnWeight="1"
+            android:text="中午休息"
+            android:textAlignment="center"
+            android:textSize="18sp" />
+        <TextView
+            android:id="@+id/txt_12L"
             android:layout_columnWeight="1"
             android:text="13:30-13:45"
             android:textAlignment="center"
             android:textSize="18sp" />
         <TextView
+            android:id="@+id/txt_12R"
             android:layout_columnWeight="1"
             android:text="写字"
             android:textAlignment="center"
             android:textSize="18sp" />
         <TextView
+            android:id="@+id/txt_13L"
             android:layout_columnWeight="1"
             android:text="13:45-13:50"
             android:textAlignment="center"
             android:textSize="18sp" />
         <TextView
+            android:id="@+id/txt_13R"
             android:layout_columnWeight="1"
             android:text="课间休息"
             android:textAlignment="center"
             android:textSize="18sp" />
         <TextView
+            android:id="@+id/txt_14L"
             android:layout_columnWeight="1"
             android:text="13:50-13:55"
             android:textAlignment="center"
             android:textSize="18sp" />
         <TextView
+            android:id="@+id/txt_14R"
             android:layout_columnWeight="1"
             android:text="眼保健操"
             android:textAlignment="center"
             android:textSize="18sp" />
         <TextView
+            android:id="@+id/txt_15L"
             android:layout_columnWeight="1"
             android:text="13:55-14:30"
             android:textAlignment="center"
             android:textSize="18sp" />
         <TextView
+            android:id="@+id/txt_15R"
             android:layout_columnWeight="1"
             android:text="第一节课"
             android:textAlignment="center"
             android:textSize="18sp" />
         <TextView
+            android:id="@+id/txt_16L"
             android:layout_columnWeight="1"
             android:text="14:30-14:40"
             android:textAlignment="center"
             android:textSize="18sp" />
         <TextView
+            android:id="@+id/txt_16R"
             android:layout_columnWeight="1"
             android:text="课间休息"
             android:textAlignment="center"
             android:textSize="18sp" />
         <TextView
+            android:id="@+id/txt_17L"
             android:layout_columnWeight="1"
             android:text="14:40-15:15"
             android:textAlignment="center"
             android:textSize="18sp" />
         <TextView
+            android:id="@+id/txt_17R"
             android:layout_columnWeight="1"
             android:text="第二节课"
             android:textAlignment="center"
             android:textSize="18sp" />
         <TextView
+            android:id="@+id/txt_18L"
             android:layout_columnWeight="1"
             android:text="15:15-15:25"
             android:textAlignment="center"
             android:textSize="18sp" />
         <TextView
+            android:id="@+id/txt_18R"
             android:layout_columnWeight="1"
             android:text="课间休息"
             android:textAlignment="center"
             android:textSize="18sp" />
         <TextView
+            android:id="@+id/txt_19L"
             android:layout_columnWeight="1"
             android:text="15:25-16:00"
             android:textAlignment="center"
             android:textSize="18sp" />
         <TextView
+            android:id="@+id/txt_19R"
             android:layout_columnWeight="1"
             android:text="第三节课"
             android:textAlignment="center"
             android:textSize="18sp" />
     </GridLayout>
-
-
 
 </LinearLayout>

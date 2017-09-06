@@ -8,30 +8,22 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
-import android.os.Handler;
-import android.os.Message;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import android.text.StaticLayout;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import org.litepal.crud.DataSupport;
-import org.w3c.dom.Text;
-
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener{
@@ -41,6 +33,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private static final String DayOfWeek_3 = "Wednesday";
     private static final String DayOfWeek_4 = "Thursday";
     private static final String DayOfWeek_5 = "Friday";
+    private static final String SETTINGS = "CS.Settings";
+    private static final String GRADE = "GradeName";
     private IntentFilter intentFilter = null;
     private WhenTimeChangeReceiver timeChangeReceiver = null;
     private String  errMsg      = null,
@@ -50,6 +44,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private int     old_color   = 0;
     private Button  btn_wrSch    = null;
     private TextView    txt_date = null,
+                        txt_grade= null,
                         old_text = null;
     private TextView[]  txt_monday      = null,
                         txt_tuesday     = null,
@@ -72,6 +67,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         btn_wrSch.setText("进入作息时间表");
         btn_wrSch.setOnClickListener(this);
         txt_date    = (TextView)findViewById(R.id.txt_date_main);
+        txt_grade   = (TextView)findViewById(R.id.txt_grade_main);
+        txt_grade.setOnClickListener(this);
         initTextGroup();
         getCurrentDate();
         //检查WorkRest表是否存在，如果不存在，则创建。
@@ -102,7 +99,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             if(timeCompare(sCurHHmm,sEnd)){
                 //当前时间大于课程结束时间，结束循环。
                 //将今天的全部课程都置为已经上的课的颜色。
-                setPassedBackcolor(1,7,0xff00ced1);
+                setPassedBackcolor(1,passNumber,0xff00ced1);
                 break;
             }else{
                 //当前时间小于课程结束时间，检查是否小于本课程开始时间。
@@ -204,12 +201,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             txt_thursday[i].setOnClickListener(this);
             txt_friday[i].setOnClickListener(this);
         }
-    }
+        SharedPreferences share = getSharedPreferences(SETTINGS,MODE_PRIVATE);
+        String grade_name = share.getString(GRADE,"");
+        if(!grade_name.isEmpty()){
+            txt_grade.setText(grade_name);
+        }else{
+            txt_grade.setText("四年级（2）班");
+        }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        unregisterReceiver(timeChangeReceiver);
     }
 
     @Override
@@ -474,7 +473,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     //返回真，表示time1大于等于time2
-    public boolean timeCompare(String time1,String time2){
+    public static boolean timeCompare(String time1,String time2){
         Log.d(TAG, "timeCompare: time1 = " + time1 + ",time2 = " + time2);
         boolean time1Bigger = false;
         SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
@@ -562,6 +561,27 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 }else{
                     bEditMode = false;
                     setEditMode();
+                }
+                break;
+            case R.id.txt_grade_main:
+                if(bEditMode){
+                    final EditText edt_grade = new EditText(this);
+                    new AlertDialog.Builder(MainActivity.this)
+                            .setTitle("请输入班级名称：")
+                            .setIcon(android.R.drawable.ic_dialog_info)
+                            .setView(edt_grade)
+                            .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    txt_grade.setText(edt_grade.getText().toString().trim());
+                                    SharedPreferences share = getSharedPreferences(SETTINGS,MODE_PRIVATE);
+                                    SharedPreferences.Editor editor = share.edit();
+                                    editor.putString(GRADE,edt_grade.getText().toString().trim());
+                                    editor.commit();
+                                }
+                            })
+                            .setNegativeButton("取消", null)
+                            .show();
                 }
                 break;
             default:

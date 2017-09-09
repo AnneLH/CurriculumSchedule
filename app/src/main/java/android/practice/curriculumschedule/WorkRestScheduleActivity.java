@@ -18,6 +18,7 @@ public class WorkRestScheduleActivity extends AppCompatActivity {
     private TimeTickReceiver tickReceiver = null;
     private TextView[]  txt_left    = null,
                         txt_right   = null;
+    private static String sWeek = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,7 +29,8 @@ public class WorkRestScheduleActivity extends AppCompatActivity {
         refreshColorShow();
         intentFilter = new IntentFilter(Intent.ACTION_TIME_TICK);
         tickReceiver = new TimeTickReceiver();
-        registerReceiver(tickReceiver,intentFilter);
+        if(!sWeek.equals("星期六") && !sWeek.equals("星期日"))
+            {registerReceiver(tickReceiver,intentFilter);}
     }
 
     private void initTextView(){
@@ -79,11 +81,13 @@ public class WorkRestScheduleActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        unregisterReceiver(tickReceiver);
+        if(tickReceiver != null){
+            unregisterReceiver(tickReceiver);}
     }
 
-    public static void activityStart(Context context){
+    public static void activityStart(Context context,String sweek){
         Intent intent = new Intent(context,WorkRestScheduleActivity.class);
+        sWeek = sweek;
         context.startActivity(intent);
     }
 

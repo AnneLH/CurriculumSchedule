@@ -82,8 +82,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     class WhenTimeChangeReceiver extends BroadcastReceiver{
         @Override
         public void onReceive(Context context, Intent intent) {
-            if(sWeek.equals("星期六") || sWeek.equals("星期天")){
-                Log.d(TAG, "onReceive: 星期六 or 星期天");;
+            if(sWeek.equals("星期六") || sWeek.equals("星期日")){
+                Log.d(TAG, "onReceive: 星期六 or 星期日");;
             }else{
                 judgeTimeAndSetColor();
             }
@@ -224,8 +224,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         refreshSchedule();
         bEditMode = false;
         setEditMode();
-        if(sWeek.equals("星期六") || sWeek.equals("星期天")){
-            Log.d(TAG, "onResume: 星期六 or 星期天");
+        if(sWeek.equals("星期六") || sWeek.equals("星期日")){
+            Log.d(TAG, "onResume: 星期六 or 星期日");
         }else{
             setColorOfToday();
         }
@@ -561,7 +561,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.btn_work_rest_schedule:
                 Log.d(TAG, "onClick: btn_wrSch ========");
                 if(!bEditMode){
-                    WorkRestScheduleActivity.activityStart(MainActivity.this);
+                    WorkRestScheduleActivity.activityStart(MainActivity.this,sWeek);
                 }else{
                     bEditMode = false;
                     setEditMode();

@@ -131,7 +131,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private void setPassedBackcolor(int iFrom,int iTo,int iColor){
         Log.d(TAG, "setPassedBackcolor: from = " + iFrom + ", to = " + iTo + ", iColor = " + iColor);
         for(int j = iFrom; j <= iTo; j++){
-            getTextView(j).setBackgroundColor(iColor);
+            if(!getTextView(j).getText().toString().trim().isEmpty()){
+                getTextView(j).setBackgroundColor(iColor);}
         }
     }
 
@@ -214,7 +215,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onStop() {
         super.onStop();
-        unregisterReceiver(timeChangeReceiver);
+        if(timeChangeReceiver != null){
+            unregisterReceiver(timeChangeReceiver);
+            timeChangeReceiver = null;}
     }
 
     @Override
@@ -228,10 +231,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             Log.d(TAG, "onResume: 星期六 or 星期日");
         }else{
             setColorOfToday();
+            intentFilter = new IntentFilter(Intent.ACTION_TIME_TICK);
+            timeChangeReceiver = new WhenTimeChangeReceiver();
+            registerReceiver(timeChangeReceiver,intentFilter);
         }
-        intentFilter = new IntentFilter(Intent.ACTION_TIME_TICK);
-        timeChangeReceiver = new WhenTimeChangeReceiver();
-        registerReceiver(timeChangeReceiver,intentFilter);
     }
 
     private void getCurrentDate(){

@@ -26,11 +26,11 @@ public class WorkRestScheduleActivity extends AppCompatActivity {
         setContentView(R.layout.activity_work_rest_schedule);
         Log.d(TAG, "onCreate: ==============");
         initTextView();
-        refreshColorShow();
-        intentFilter = new IntentFilter(Intent.ACTION_TIME_TICK);
-        tickReceiver = new TimeTickReceiver();
-        if(!sWeek.equals("星期六") && !sWeek.equals("星期日"))
-            {registerReceiver(tickReceiver,intentFilter);}
+        if(!sWeek.equals("星期六") && !sWeek.equals("星期日")){
+            refreshColorShow();
+            intentFilter = new IntentFilter(Intent.ACTION_TIME_TICK);
+            tickReceiver = new TimeTickReceiver();
+            registerReceiver(tickReceiver,intentFilter);}
     }
 
     private void initTextView(){
@@ -82,7 +82,8 @@ public class WorkRestScheduleActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         if(tickReceiver != null){
-            unregisterReceiver(tickReceiver);}
+            unregisterReceiver(tickReceiver);
+            tickReceiver = null;}
     }
 
     public static void activityStart(Context context,String sweek){

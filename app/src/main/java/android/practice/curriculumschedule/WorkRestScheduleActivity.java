@@ -14,6 +14,7 @@ import java.util.Calendar;
 
 public class WorkRestScheduleActivity extends AppCompatActivity {
     private static final String TAG = "WorkRestScheduleActivit";
+    private static final boolean SHOWLOG = DataInit.isSHOWLOG();
     private IntentFilter intentFilter = null;
     private TimeTickReceiver tickReceiver = null;
     private TextView[]  txt_left    = null,
@@ -24,7 +25,7 @@ public class WorkRestScheduleActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_work_rest_schedule);
-        Log.d(TAG, "onCreate: ==============");
+        if(SHOWLOG) Log.d(TAG, "onCreate: ==============");
         initTextView();
         if(!sWeek.equals("星期六") && !sWeek.equals("星期日")){
             refreshColorShow();
@@ -93,7 +94,7 @@ public class WorkRestScheduleActivity extends AppCompatActivity {
     }
 
     private void refreshColorShow(){
-        Log.d(TAG, "refreshColorShow: =========");
+        if(SHOWLOG) Log.d(TAG, "refreshColorShow: =========");
         Calendar c = Calendar.getInstance();
         SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
         String timeNow = sdf.format(c.getTime());

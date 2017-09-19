@@ -24,7 +24,7 @@ import java.util.List;
 
 public class CurriculumMaintenanceActivity extends AppCompatActivity {
     private static final String TAG = "CurriculumMaintenanceAc";
-
+    private static final boolean SHOWLOG = DataInit.isSHOWLOG();
     private List<Curriculum> curriculumList = null;
     private CurAdapter adapter = null;
     private RecyclerView recyclerView = null;
@@ -43,7 +43,7 @@ public class CurriculumMaintenanceActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_curriculum_maintenance);
-        Log.d(TAG, "onCreate: ============");
+        if(SHOWLOG) Log.d(TAG, "onCreate: ============");
         btn_insert  = (Button)findViewById(R.id.btn_insert_curriculumMaintenance);
         btn_update  = (Button)findViewById(R.id.btn_update_curriculumMaintenance);
         btn_delete  = (Button)findViewById(R.id.btn_delete_curriculumMaintenance);
@@ -71,7 +71,7 @@ public class CurriculumMaintenanceActivity extends AppCompatActivity {
     class btn_insert implements View.OnClickListener{
         @Override
         public void onClick(View v) {
-            Log.d(TAG, "onClick: btn_insert ============");
+            if(SHOWLOG) Log.d(TAG, "onClick: btn_insert ============");
             //首先检查课程名称是否已经存在
             String sName = edt_name.getText().toString().trim();
             Boolean bFound = false;
@@ -87,12 +87,12 @@ public class CurriculumMaintenanceActivity extends AppCompatActivity {
                 curriculumNew.setName(sName);
                 if(!curriculumNew.save()){
                     errMsg = "新增课程失败！课程名称：" + sName;
-                    Log.e(TAG, "onClick: btn_insert =====:" + errMsg );
+                    if(SHOWLOG) Log.e(TAG, "onClick: btn_insert =====:" + errMsg );
                     Toast.makeText(CurriculumMaintenanceActivity.this,errMsg,Toast.LENGTH_SHORT).show();
                 }else{
                     //刷新课程名称表（curriculum）
                     errMsg = "新增课程成功！课程名称：" + sName;
-                    Log.d(TAG, "onClick: btn_insert =====" + errMsg);
+                    if(SHOWLOG) Log.d(TAG, "onClick: btn_insert =====" + errMsg);
                     Toast.makeText(CurriculumMaintenanceActivity.this,errMsg,Toast.LENGTH_SHORT).show();
                     edt_name.setText("");
                     refreshList();
@@ -100,7 +100,7 @@ public class CurriculumMaintenanceActivity extends AppCompatActivity {
             }else{
                 //找到同名的课程，弹出提示。
                 errMsg = "找到同名课程，不能新增。";
-                Log.i(TAG, "onClick: btn_insert ======:" + errMsg);
+                if(SHOWLOG) Log.i(TAG, "onClick: btn_insert ======:" + errMsg);
                 Toast.makeText(CurriculumMaintenanceActivity.this,errMsg,Toast.LENGTH_SHORT).show();
             }
         }
@@ -110,12 +110,12 @@ public class CurriculumMaintenanceActivity extends AppCompatActivity {
     class btn_update implements View.OnClickListener{
         @Override
         public void onClick(View v) {
-            Log.d(TAG, "onClick: btn_update ============");
+            if(SHOWLOG) Log.d(TAG, "onClick: btn_update ============");
             //首先检查课程名称是否为空
             final String sName = edt_name.getText().toString().trim();
             if(sName.isEmpty()){
                 errMsg = "课程名称为空，修改失败。";
-                Log.d(TAG, "onClick: btn_update =========" + errMsg);
+                if(SHOWLOG) Log.d(TAG, "onClick: btn_update =========" + errMsg);
                 Toast.makeText(CurriculumMaintenanceActivity.this,errMsg,Toast.LENGTH_SHORT).show();
                 return;
             }
@@ -133,12 +133,12 @@ public class CurriculumMaintenanceActivity extends AppCompatActivity {
                             int i_update = curriculumNew.update(oldId);
                             if(i_update == 0){
                                 errMsg = "修改课程失败！要修改的课程名称：" + oldName;
-                                Log.e(TAG, "onClick: btn_update =====:" + errMsg );
+                                if(SHOWLOG) Log.e(TAG, "onClick: btn_update =====:" + errMsg );
                                 Toast.makeText(CurriculumMaintenanceActivity.this,errMsg,Toast.LENGTH_SHORT).show();
                             }else {
                                 //刷新课程名称表（curriculum）
                                 errMsg = "修改课程成功！原名称：\"" + oldName + "\"，新名称：\"" + sName + "\"";
-                                Log.d(TAG, "onClick: btn_update =====" + errMsg);
+                                if(SHOWLOG) Log.d(TAG, "onClick: btn_update =====" + errMsg);
                                 Toast.makeText(CurriculumMaintenanceActivity.this, errMsg, Toast.LENGTH_SHORT).show();
                                 refreshList();
                                 oldName = sName;
@@ -153,12 +153,12 @@ public class CurriculumMaintenanceActivity extends AppCompatActivity {
     class btn_delete implements View.OnClickListener{
         @Override
         public void onClick(View v) {
-            Log.d(TAG, "onClick: btn_delete ============");
+            if(SHOWLOG) Log.d(TAG, "onClick: btn_delete ============");
             //首先检查课程名称是否为空
             String sName = edt_name.getText().toString().trim();
             if(sName.isEmpty()){
                 errMsg = "课程名称为空，删除失败。";
-                Log.d(TAG, "onClick: btn_delete =========" + errMsg);
+                if(SHOWLOG) Log.d(TAG, "onClick: btn_delete =========" + errMsg);
                 Toast.makeText(CurriculumMaintenanceActivity.this,errMsg,Toast.LENGTH_SHORT).show();
                 return;
             }
@@ -174,12 +174,12 @@ public class CurriculumMaintenanceActivity extends AppCompatActivity {
                             int i_update = DataSupport.delete(Curriculum.class,oldId);
                             if(i_update == 0){
                                 errMsg = "删除课程失败！要删除的课程id = " + oldId + "，名称为\"" + oldName + "\"";
-                                Log.e(TAG, "onClick: btn_update =====:" + errMsg );
+                                if(SHOWLOG) Log.e(TAG, "onClick: btn_update =====:" + errMsg );
                                 Toast.makeText(CurriculumMaintenanceActivity.this,errMsg,Toast.LENGTH_SHORT).show();
                             }else {
                                 //刷新课程名称表（curriculum）
                                 errMsg = "删除课程成功！课程id = " + oldId + "，课程名称：\"" + oldName + "\"";
-                                Log.d(TAG, "onClick: btn_update =====" + errMsg);
+                                if(SHOWLOG) Log.d(TAG, "onClick: btn_update =====" + errMsg);
                                 Toast.makeText(CurriculumMaintenanceActivity.this, errMsg, Toast.LENGTH_SHORT).show();
                                 refreshList();
                             }
@@ -192,13 +192,13 @@ public class CurriculumMaintenanceActivity extends AppCompatActivity {
     class btn_back implements View.OnClickListener{
         @Override
         public void onClick(View v) {
-            Log.d(TAG, "onClick: btn_back ==============");
+            if(SHOWLOG) Log.d(TAG, "onClick: btn_back ==============");
             finish();
         }
     }
 
     private void createCurriculum(){
-        Log.i(TAG, "createCurriculum: ==========");
+        if(SHOWLOG) Log.i(TAG, "createCurriculum: ==========");
         try{
             Curriculum curriculum1 = new Curriculum();
             curriculum1.setName(getString(R.string.str_YuWen));
@@ -232,7 +232,7 @@ public class CurriculumMaintenanceActivity extends AppCompatActivity {
 
     //刷新课程名称表（curriculum）,将课程名称在recyclerView中显示。
     private void refreshList(){
-        Log.d(TAG, "refreshList: ===============");
+        if(SHOWLOG) Log.d(TAG, "refreshList: ===============");
         curriculumList = DataSupport.findAll(Curriculum.class);
         adapter = new CurAdapter(curriculumList);
         recyclerView.setAdapter(adapter);
@@ -269,7 +269,7 @@ public class CurriculumMaintenanceActivity extends AppCompatActivity {
                     oldName = mCurriculumList.get(pos).getName();
                     edt_name.setText(oldName);
                     edt_name.setSelection(oldName.length());
-                    Log.d(TAG, "onClick: pos = " + pos);
+                    if(SHOWLOG) Log.d(TAG, "onClick: pos = " + pos);
                     notifyDataSetChanged();
                 }
             });

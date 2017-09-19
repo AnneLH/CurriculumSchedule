@@ -11,7 +11,6 @@ import android.graphics.drawable.ColorDrawable;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.text.StaticLayout;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -28,6 +27,7 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener{
     private static final String TAG = "MainActivity";
+    private static final boolean SHOWLOG = DataInit.isSHOWLOG();
     private static final String DayOfWeek_1 = "Monday";
     private static final String DayOfWeek_2 = "Tuesday";
     private static final String DayOfWeek_3 = "Wednesday";
@@ -62,7 +62,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Log.d(TAG, "onCreate: ================");
+        if(SHOWLOG) Log.d(TAG, "onCreate: ================");
         btn_wrSch   = (Button)findViewById(R.id.btn_work_rest_schedule);
         btn_wrSch.setText("进入作息时间表");
         btn_wrSch.setOnClickListener(this);
@@ -83,7 +83,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         @Override
         public void onReceive(Context context, Intent intent) {
             if(sWeek.equals("星期六") || sWeek.equals("星期日")){
-                Log.d(TAG, "onReceive: 星期六 or 星期日");;
+                if(SHOWLOG) Log.d(TAG, "onReceive: 星期六 or 星期日");;
             }else{
                 judgeTimeAndSetColor();
             }
@@ -99,7 +99,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             sBegin  = workrestList.get(i).getTimeBegin();
             sEnd    = workrestList.get(i).getTimeEnd();
             sName   = workrestList.get(i).getName();
-            Log.d(TAG, "judgeTimeAndSetColor: ========"+ sName.substring(0,1));
+            if(SHOWLOG) Log.d(TAG, "judgeTimeAndSetColor: ========"+ sName.substring(0,1));
             if(timeCompare(sCurHHmm,sEnd)){
                 //当前时间大于课程结束时间，结束循环。
                 //将今天的全部课程都置为已经上的课的颜色。
@@ -125,11 +125,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 }
             }
         }
-        Log.d(TAG, "judgeTimeAndSetColor: passnumber = " + passNumber);
+        if(SHOWLOG) Log.d(TAG, "judgeTimeAndSetColor: passnumber = " + passNumber);
     }
 
     private void setPassedBackcolor(int iFrom,int iTo,int iColor){
-        Log.d(TAG, "setPassedBackcolor: from = " + iFrom + ", to = " + iTo + ", iColor = " + iColor);
+        if(SHOWLOG) Log.d(TAG, "setPassedBackcolor: from = " + iFrom + ", to = " + iTo + ", iColor = " + iColor);
         for(int j = iFrom; j <= iTo; j++){
             if(!getTextView(j).getText().toString().trim().isEmpty()){
                 getTextView(j).setBackgroundColor(iColor);}
@@ -144,7 +144,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case "星期四":return txt_thursday[index];
             case "星期五":return txt_friday[index];
             default:
-                Log.e(TAG, "getTextView: === Should not reach here! ===");
+                if(SHOWLOG) Log.e(TAG, "getTextView: === Should not reach here! ===");
                 return txt_monday[index];//不应该让程序运行到这里，真到这里，说明哪里有漏洞。
         }
     }
@@ -223,12 +223,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onResume() {
         super.onResume();
-        Log.d(TAG, "onResume: ===========");
+        if(SHOWLOG) Log.d(TAG, "onResume: ===========");
         refreshSchedule();
         bEditMode = false;
         setEditMode();
         if(sWeek.equals("星期六") || sWeek.equals("星期日")){
-            Log.d(TAG, "onResume: 星期六 or 星期日");
+            if(SHOWLOG) Log.d(TAG, "onResume: 星期六 or 星期日");
         }else{
             setColorOfToday();
             intentFilter = new IntentFilter(Intent.ACTION_TIME_TICK);
@@ -261,7 +261,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void createSchedule(){
-        Log.i(TAG, "createSchedule: ==========");
+        if(SHOWLOG) Log.i(TAG, "createSchedule: ==========");
         try{
             Schedule schedule1 = new Schedule();
             schedule1.setClassId(1);
@@ -321,14 +321,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             schedule7.saveThrows();
         }catch (Exception e){
             e.printStackTrace();
-            Log.e(TAG, "createSchedule: ========" + e.toString() );
+            if(SHOWLOG) Log.e(TAG, "createSchedule: ========" + e.toString() );
         }finally {
             scheduleList = DataSupport.findAll(Schedule.class);
         }
     }
 
     private void createWorkRest(){
-        Log.d(TAG, "createWorkRest: ============");
+        if(SHOWLOG) Log.d(TAG, "createWorkRest: ============");
         try{
             WorkRest wr1 = new WorkRest();
             wr1.setMyId(1);
@@ -446,13 +446,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             wr19.saveThrows();
         }catch (Exception e){
             e.printStackTrace();
-            Log.e(TAG, "createWorkRest: "+ e.toString() );
+            if(SHOWLOG) Log.e(TAG, "createWorkRest: "+ e.toString() );
         }
     }
 
     //刷新课程名称表（Schedule）,将课程名称在recyclerView中显示。
     private void refreshSchedule(){
-        Log.d(TAG, "refreshSchedule: ===============");
+        if(SHOWLOG) Log.d(TAG, "refreshSchedule: ===============");
         //检查Schedule表是否存在，如果不存在，则创建。
         scheduleList = DataSupport.findAll(Schedule.class);
         if(scheduleList == null || scheduleList.size() == 0){
@@ -474,27 +474,27 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     //正在上的课程颜色为<color name="lime">#00ff00</color> <!-- 酸橙色 -->
     //已经上的课程颜色为<color name="darkturquoise">#00ced1</color> <!-- 暗宝石绿 -->
     private void setColorOfToday(){
-        Log.d(TAG, "setColorOfToday: =========");
+        if(SHOWLOG) Log.d(TAG, "setColorOfToday: =========");
         setPassedBackcolor(1,7,0xff00fa9a);
         judgeTimeAndSetColor();
     }
 
     //返回真，表示time1大于等于time2
     public static boolean timeCompare(String time1,String time2){
-        Log.d(TAG, "timeCompare: time1 = " + time1 + ",time2 = " + time2);
+        if(SHOWLOG) Log.d(TAG, "timeCompare: time1 = " + time1 + ",time2 = " + time2);
         boolean time1Bigger = false;
         SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
         try{
             if(sdf.parse(time1).getTime() >= sdf.parse(time2).getTime()){
-                Log.d(TAG, "timeCompare: time1Bigger");
+                if(SHOWLOG) Log.d(TAG, "timeCompare: time1Bigger");
                 time1Bigger = true;
             }else{
-                Log.d(TAG, "timeCompare: time2Bigger");
+                if(SHOWLOG) Log.d(TAG, "timeCompare: time2Bigger");
                 time1Bigger = false;
             }
         }catch (Exception e){
             e.printStackTrace();
-            Log.e(TAG, "timeCompare: "+e.toString());
+            if(SHOWLOG) Log.e(TAG, "timeCompare: "+e.toString());
         }
         return time1Bigger;
     }
@@ -509,18 +509,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
             case R.id.menu_curriculumNameMaintenance:
-                Log.d(TAG, "onOptionsItemSelected: menu_curriculumNameMaintenance");
+                if(SHOWLOG) Log.d(TAG, "onOptionsItemSelected: menu_curriculumNameMaintenance");
                 CurriculumMaintenanceActivity.activityStart(MainActivity.this);
                 break;
             case R.id.menu_scheduleMaintenance:
-                Log.d(TAG, "onOptionsItemSelected: menu_scheduleMaintenance");
+                if(SHOWLOG) Log.d(TAG, "onOptionsItemSelected: menu_scheduleMaintenance");
                 new AlertDialog.Builder(MainActivity.this)
                         .setTitle("请确认")
                         .setMessage("是否进入课程表设置模式？")
                         .setPositiveButton("是", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                Log.d(TAG, "onOptionsItemSelected: 进入编辑模式==========");
+                                if(SHOWLOG) Log.d(TAG, "onOptionsItemSelected: 进入编辑模式==========");
                                 bEditMode = true;
                                 setEditMode();
 
@@ -535,13 +535,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             default:
                 errMsg = "没有这个选项，请联系程序管理员。";
-                Log.i(TAG, "onOptionsItemSelected: " + errMsg);
+                if(SHOWLOG) Log.i(TAG, "onOptionsItemSelected: " + errMsg);
                 Toast.makeText(MainActivity.this,errMsg,Toast.LENGTH_SHORT).show();
         }
         return true;
     }
     private void setEditMode(){
-        Log.d(TAG, "setEditMode: =========");
+        if(SHOWLOG) Log.d(TAG, "setEditMode: =========");
         LinearLayout mylayout = (LinearLayout)findViewById(R.id.layout_main);
         if(bEditMode){
             mylayout.setBackgroundColor(Color.RED);
@@ -562,7 +562,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.btn_work_rest_schedule:
-                Log.d(TAG, "onClick: btn_wrSch ========");
+                if(SHOWLOG) Log.d(TAG, "onClick: btn_wrSch ========");
                 if(!bEditMode){
                     WorkRestScheduleActivity.activityStart(MainActivity.this,sWeek);
                 }else{
@@ -593,7 +593,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             default:
                 if(bEditMode){
-                    Log.d(TAG, "onClick: edit curriculums =============");
+                    if(SHOWLOG) Log.d(TAG, "onClick: edit curriculums =============");
                     for(int i = 1;i<=7;i++){
                         if(txt_monday[i].getId() == v.getId()){
                             setCurriculum(DayOfWeek_1,i);
@@ -642,7 +642,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         }
                     }
                 }else{
-                    Log.d(TAG, "onClick: bEditMode == false");
+                    if(SHOWLOG) Log.d(TAG, "onClick: bEditMode == false");
                     for(int i = 1;i<=7;i++){
                         if(txt_monday[i].getId() == v.getId()){
                             if(old_text != null)
@@ -691,16 +691,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     //设置具体某一节课的课程名称
     private void setCurriculum(String dayofweek, final int classid){
-        Log.d(TAG, "setCurriculum: ===========");
+        if(SHOWLOG) Log.d(TAG, "setCurriculum: ===========");
         switch (dayofweek){
             case DayOfWeek_1:
-                Log.d(TAG, "setCurriculum: DayOfWeek_1");
+                if(SHOWLOG) Log.d(TAG, "setCurriculum: DayOfWeek_1");
                 new AlertDialog.Builder(MainActivity.this)
                         .setTitle("课程设置")
                         .setSingleChoiceItems(curriculums, 0, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                Log.d(TAG, "onClick: DayOfWeek_1,"+ which);
+                                if(SHOWLOG) Log.d(TAG, "onClick: DayOfWeek_1,"+ which);
                                 txt_monday[classid].setText(curriculums[which]);
                                 Schedule schedule = new Schedule();
                                 schedule.setMonday(curriculums[which]);
@@ -711,13 +711,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         .show();
                 break;
             case DayOfWeek_2:
-                Log.d(TAG, "setCurriculum: DayOfWeek_2");
+                if(SHOWLOG) Log.d(TAG, "setCurriculum: DayOfWeek_2");
                 new AlertDialog.Builder(MainActivity.this)
                         .setTitle("课程设置")
                         .setSingleChoiceItems(curriculums, 0, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                Log.d(TAG, "onClick: DayOfWeek_2,"+ which);
+                                if(SHOWLOG) Log.d(TAG, "onClick: DayOfWeek_2,"+ which);
                                 txt_tuesday[classid].setText(curriculums[which]);
                                 Schedule schedule = new Schedule();
                                 schedule.setTuesday(curriculums[which]);
@@ -728,13 +728,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         .show();
                 break;
             case DayOfWeek_3:
-                Log.d(TAG, "setCurriculum: DayOfWeek_3");
+                if(SHOWLOG) Log.d(TAG, "setCurriculum: DayOfWeek_3");
                 new AlertDialog.Builder(MainActivity.this)
                         .setTitle("课程设置")
                         .setSingleChoiceItems(curriculums, 0, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                Log.d(TAG, "onClick: DayOfWeek_3,"+ which);
+                                if(SHOWLOG) Log.d(TAG, "onClick: DayOfWeek_3,"+ which);
                                 txt_wednesday[classid].setText(curriculums[which]);
                                 Schedule schedule = new Schedule();
                                 schedule.setWednesday(curriculums[which]);
@@ -745,13 +745,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         .show();
                 break;
             case DayOfWeek_4:
-                Log.d(TAG, "setCurriculum: DayOfWeek_4");
+                if(SHOWLOG) Log.d(TAG, "setCurriculum: DayOfWeek_4");
                 new AlertDialog.Builder(MainActivity.this)
                         .setTitle("课程设置")
                         .setSingleChoiceItems(curriculums, 0, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                Log.d(TAG, "onClick: DayOfWeek_4,"+ which);
+                                if(SHOWLOG) Log.d(TAG, "onClick: DayOfWeek_4,"+ which);
                                 txt_thursday[classid].setText(curriculums[which]);
                                 Schedule schedule = new Schedule();
                                 schedule.setThursday(curriculums[which]);
@@ -762,13 +762,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         .show();
                 break;
             case DayOfWeek_5:
-                Log.d(TAG, "setCurriculum: DayOfWeek_5");
+                if(SHOWLOG) Log.d(TAG, "setCurriculum: DayOfWeek_5");
                 new AlertDialog.Builder(MainActivity.this)
                         .setTitle("课程设置")
                         .setSingleChoiceItems(curriculums, 0, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                Log.d(TAG, "onClick: DayOfWeek_5,"+ which);
+                                if(SHOWLOG) Log.d(TAG, "onClick: DayOfWeek_5,"+ which);
                                 txt_friday[classid].setText(curriculums[which]);
                                 Schedule schedule = new Schedule();
                                 schedule.setFriday(curriculums[which]);
@@ -779,7 +779,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         .show();
                 break;
             default:
-                Log.i(TAG, "setCurriculum: Unexcepted!!!!!!!!!!!!!!");
+                if(SHOWLOG) Log.i(TAG, "setCurriculum: Unexcepted!!!!!!!!!!!!!!");
         }
     }
     private void textViewSelected(TextView textview,boolean bool){

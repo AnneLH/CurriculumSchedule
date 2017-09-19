@@ -513,4 +513,41 @@
         android:textSize="18sp"
         android:layout_gravity="center"
         android:layout_marginTop="10dp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="18sp"
+        android:text="颜色说明："
+        android:layout_marginLeft="2dp"
+        />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="18sp"
+        android:text="正在上的课"
+        android:background="@color/lime"
+        android:layout_marginLeft="50dp"
+        android:layout_marginTop="1dp"
+        />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="18sp"
+        android:text="还没上的课"
+        android:background="@color/mediumspringgreen"
+        android:layout_marginLeft="50dp"
+        android:layout_marginTop="1dp"
+        />
+    <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="18sp"
+            android:text="已经上的课"
+            android:background="@color/darkturquoise"
+            android:layout_marginLeft="50dp"
+            android:layout_marginTop="1dp"
+            />
+
+
 </LinearLayout>
